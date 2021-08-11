@@ -1,14 +1,14 @@
 {
-	"name": "app-name",
-	"productName": "App Name",
-	"version": "0.0.0",
-	"description": "The best app ever",
+	"name": "mp4-player",
+	"productName": "mp4-player",
+	"version": "0.1.0",
+	"description": "A simple mp4 player",
 	"license": "MIT",
-	"repository": "sindresorhus/electron-boilerplate",
+	"repository": "anonymoustaco/mp4Player",
 	"author": {
-		"name": "Your Name",
+		"name": "anonymoustaco",
 		"email": "user@gmail.com",
-		"url": "https://sindresorhus.com"
+		"url": "anonymoustaco.github.io"
 	},
 	"scripts": {
 		"postinstall": "electron-builder install-app-deps",
@@ -44,7 +44,7 @@
 		"releaseDraft": false
 	},
 	"build": {
-		"appId": "com.company.AppName",
+		"appId": "com.thomas.mp4",
 		"mac": {
 			"category": "public.app-category.social-networking",
 			"darkModeSupport": true

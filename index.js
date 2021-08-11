@@ -1,20 +1,17 @@
 'use strict';
 const path = require('path');
-const {app, BrowserWindow, Menu} = require('electron');
+const {dialog, app, BrowserWindow, Menu, ipcMain} = require('electron');
+const ipc = ipcMain
 /// const {autoUpdater} = require('electron-updater');
 const {is} = require('electron-util');
 const unhandled = require('electron-unhandled');
 const debug = require('electron-debug');
 const contextMenu = require('electron-context-menu');
-const config = require('./config.js');
-const menu = require('./menu.js');
-
 unhandled();
-debug();
 contextMenu();
 
 // Note: Must match `build.appId` in package.json
-app.setAppUserModelId('com.company.AppName');
+app.setAppUserModelId('com.thomas.mp4');
 
 // Uncomment this before publishing your first version.
 // It's commented out as it throws an error if there are no published versions.
@@ -34,8 +31,13 @@ const createMainWindow = async () => {
 	const win = new BrowserWindow({
 		title: app.name,
 		show: false,
-		width: 600,
-		height: 400
+		width: 1920,
+		height: 1080,
+		webPreferences : {
+			contextIsolation : false,
+			nodeIntegration : true
+		},
+		icon : "./build/icon.png"
 	});
 
 	win.on('ready-to-show', () => {
@@ -57,7 +59,23 @@ const createMainWindow = async () => {
 if (!app.requestSingleInstanceLock()) {
 	app.quit();
 }
-
+ipc.on('reload', () => {
+	mainWindow.reload()
+	console.log('recived')
+})
+ipc.on('open-file', (event, arg) => {
+	console.log('recived')
+	const options = {
+		"title" : "Open your mp4",
+		filters: [
+			{ name: 'mp4', extensions: ['mp4'] }
+		  ]
+	}
+	dialog.showOpenDialog(null, options).then((arg) => {
+		console.log(arg)
+		event.sender.send('path', (event, arg))
+	}) 
+})
 app.on('second-instance', () => {
 	if (mainWindow) {
 		if (mainWindow.isMinimized()) {
@@ -82,9 +100,6 @@ app.on('activate', async () => {
 
 (async () => {
 	await app.whenReady();
-	Menu.setApplicationMenu(menu);
+	//Menu.setApplicationMenu(Menu.buildFromTemplate([]));
 	mainWindow = await createMainWindow();
-
-	const favoriteAnimal = config.get('favoriteAnimal');
-	mainWindow.webContents.executeJavaScript(`document.querySelector('header p').textContent = 'Your favorite animal is ${favoriteAnimal}'`);
 })();
